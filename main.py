@@ -4,7 +4,7 @@ import json
 # o que funcionou para alteraar o tamanho, era só mudar o tilepa
 # Inicializa o Pygame
 
-imagem_teste = pygame.image.load("spritesheet.png")
+imagem_teste = pygame.image.load("fundo.png")
 pygame.init()
 
 # Carregar JSON do mapa
