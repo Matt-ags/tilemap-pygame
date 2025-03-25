@@ -49,7 +49,7 @@
                       color = (0, 255, 0)
                       pygame.draw.rect(screen, color, (x, y, tile_size, tile_size))
   ```
-  - A função draw_layer(colliders_only) desenha o fundo ou a camada de colisão.
+  - A função *draw_layer(colliders_only)* desenha o fundo ou a camada de colisão.
 
   - O mapa JSON contém camadas que podem ou não ser de colisão.
 
@@ -69,34 +69,35 @@
 
   - *player_rect* guarda a posição e o tamanho do jogador.
 
-  <!-- 5. Loop principal do jogo
-python
-Copiar
-Editar
-running = True
-while running:
-    screen.fill((0, 0, 0))  # Limpa a tela
+  ## 5. Loop principal do jogo
+  
+  ```python
+  running = True
+  while running:
+      screen.fill((0, 0, 0))  # Limpa a tela
+  
+      colliders.clear()  # Resetar os colliders para evitar duplicações
+      draw_layer(colliders_only=False)  # Desenha o fundo
+      draw_layer(colliders_only=True)   # Depois desenha as paredes
+  ```
+  
+  - O loop limpa a tela e redesenha o mapa a cada frame.
 
-    colliders.clear()  # Resetar os colliders para evitar duplicações
-    draw_layer(colliders_only=False)  # Desenha o fundo
-    draw_layer(colliders_only=True)   # Depois desenha as paredes
-O loop limpa a tela e redesenha o mapa a cada frame.
+  - A lista colliders é limpa antes de ser reconstruída para evitar tiles duplicados.
 
-A lista colliders é limpa antes de ser reconstruída para evitar tiles duplicados.
+  ## 6. Capturar eventos
 
-6. Capturar eventos
-python
-Copiar
-Editar
+  ```python
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-O loop verifica se o jogador fechou a janela (pygame.QUIT).
+  ```
 
-7. Mover o jogador
-python
-Copiar
-Editar
+  - O loop verifica se o jogador fechou a janela (pygame.QUIT).
+
+  ## 7. Mover o jogador
+
+  ```python
     keys = pygame.key.get_pressed()
     new_x, new_y = player_rect.x, player_rect.y
 
@@ -108,43 +109,50 @@ Editar
         new_x -= player_speed
     if keys[pygame.K_d]:  # Direita
         new_x += player_speed
-Se o jogador pressionar W, A, S ou D, o código tenta mover o jogador.
+  ```
 
-8. Testar colisão
-python
-Copiar
-Editar
+  - Se o jogador pressionar W, A, S ou D, o código tenta mover o jogador.
+
+  ## 8. Testar colisão
+
+  ```python
     new_rect = pygame.Rect(new_x, new_y, tile_size, tile_size)
 
     if not any(new_rect.colliderect(collider) for collider in colliders):
         player_rect.x = new_x
         player_rect.y = new_y
-Um novo retângulo (new_rect) é criado na posição para onde o jogador quer se mover.
+  ```
 
-Se não houver colisão, a posição do jogador é atualizada.
+  - Um novo retângulo (new_rect) é criado na posição para onde o jogador quer se mover.
 
-9. Desenhar o jogador e atualizar a tela
-python
-Copiar
-Editar
+  - Se não houver colisão, a posição do jogador é atualizada.
+
+  ## 9. Desenhar o jogador e atualizar a tela
+
+  ```python
     pygame.draw.rect(screen, player_color, player_rect)
     pygame.display.flip()
-O jogador é desenhado na tela como um retângulo azul.
+  ```
 
-pygame.display.flip() atualiza a tela.
+  - O jogador é desenhado na tela como um retângulo azul.
 
-10. Fechar o jogo
-python
-Copiar
-Editar
-pygame.quit()
-Quando o loop termina, o Pygame é encerrado. -->
+  - *pygame.display.flip()* atualiza a tela.
+
+  ## 10. Fechar o jogo
+
+  ```python
+  pygame.quit()
+  ```
+
+  - Quando o loop termina, o Pygame é encerrado. 
 </details>
 
 <details>
   <summary><h2>📄 Explicando o JSON</h2></summary>
-  ## JSON de Mapa
-  - Json simples para exemplificação:
+  
+  ## map.JSON
+  
+  - JSON simples para exemplificação:
   
   ```json
   {
@@ -171,165 +179,176 @@ Quando o loop termina, o Pygame é encerrado. -->
   }
   ```
 
-  <!-- Explicação
-1. "tileSize": 32
-Indica que cada tile (quadrado do mapa) tem 32x32 pixels.
+  ### Explicação
+  
+  1. ```"tileSize"```: 32
+  Indica que cada tile (quadrado do mapa) tem 32x32 pixels.
 
-2. "layers" (Lista de Camadas)
-O JSON contém um array layers, onde cada item representa uma camada do mapa.
+  2. ```"layers"``` (Lista de Camadas)
+  O JSON contém um array layers, onde cada item representa uma camada do mapa.
 
-3. "Fundo"
-json
-Copiar
-Editar
-{
-  "name": "Fundo",
-  "tiles": [
-    { "x": 0, "y": 0 },
-    { "x": 1, "y": 0 },
-    { "x": 2, "y": 0 }
-  ]
-}
-Essa camada contém os tiles que fazem parte do cenário de fundo.
+  3. "Fundo"
 
-Os objetos dentro de tiles representam a posição do tile no mapa.
+  ```json
+  {
+    "name": "Fundo",
+    "tiles": [
+      { "x": 0, "y": 0 },
+      { "x": 1, "y": 0 },
+      { "x": 2, "y": 0 }
+    ]
+  }
+  ```
 
-{ "x": 0, "y": 0 } → Tile na posição (0,0)
+  - Essa camada contém os tiles que fazem parte do cenário de fundo.
 
-{ "x": 1, "y": 0 } → Tile na posição (1,0)
+  - Os objetos dentro de tiles representam a posição do tile no mapa.
 
-{ "x": 2, "y": 0 } → Tile na posição (2,0)
+  ```{ "x": 0, "y": 0 }``` → Tile na posição (0,0)
 
-4. "Colisões"
-json
-Copiar
-Editar
-{
-  "name": "Colisões",
-  "collider": true,
-  "tiles": [
-    { "x": 5, "y": 5 },
-    { "x": 6, "y": 5 },
-    { "x": 7, "y": 5 }
-  ]
-}
-Essa camada representa blocos que têm colisão.
+  ```{ "x": 1, "y": 0 }``` → Tile na posição (1,0)
 
-"collider": true → Indica que essa camada é de colisão.
+  ```{ "x": 2, "y": 0 }``` → Tile na posição (2,0)
 
-Os tiles dessa camada são blocos sólidos que o jogador não pode atravessar.
+  4. "Colisões"
 
-Como o código usa esse JSON?
-1. Define o tamanho dos tiles:
-python
-Copiar
-Editar
-tile_size = map_data["tileSize"]
-2. Percorre as camadas do JSON e desenha os tiles:
-python
-Copiar
-Editar
-for layer in map_data["layers"]:
-    for tile in layer["tiles"]:
-        x, y = tile["x"] * tile_size, tile["y"] * tile_size
-3. Se a camada for de colisão ("collider": true), adiciona à lista de colisores (colliders):
-python
-Copiar
-Editar
-if is_collider:
-    colliders.append(pygame.Rect(x, y, tile_size, tile_size))
-4. Se for um tile de fundo, desenha um quadrado verde:
-python
-Copiar
-Editar
-pygame.draw.rect(screen, (0, 255, 0), (x, y, tile_size, tile_size)) -->
+  ```json
+  {
+    "name": "Colisões",
+    "collider": true,
+    "tiles": [
+      { "x": 5, "y": 5 },
+      { "x": 6, "y": 5 },
+      { "x": 7, "y": 5 }
+    ]
+  }
+  ```
+  - Essa camada representa blocos que têm colisão.
 
+  - ```"collider": true``` → Indica que essa camada é de colisão.
+
+  - Os tiles dessa camada são blocos sólidos que o jogador não pode atravessar.
+
+  ## Como o código usa esse JSON?
+  
+  ### 1. Define o tamanho dos tiles:
+
+  ```python
+  tile_size = map_data["tileSize"]
+  ```
+
+  ### 2. Percorre as camadas do JSON e desenha os tiles:
+
+  ```python
+  for layer in map_data["layers"]:
+      for tile in layer["tiles"]:
+          x, y = tile["x"] * tile_size, tile["y"] * tile_size
+  ```
+
+  ### 3. Se a camada for de colisão ("collider": true), adiciona à lista de colisores (colliders):
+
+  ```python
+  if is_collider:
+      colliders.append(pygame.Rect(x, y, tile_size, tile_size))
+  ```
+
+  ### 4. Se for um tile de fundo, desenha um quadrado verde:
+
+  ```python
+  pygame.draw.rect(screen, (0, 255, 0), (x, y, tile_size, tile_size))
+  ```
 
 </details>
 
 <details>
   <summary><h2>🗂️ Explicando o sistema de camadas</h2></summary>
+  
   ## 🔹 Como as camadas funcionam?
 
-  Se houver um tile de chão na posição (1,2) e uma parede na mesma posição (1,2), o código vai desenhar o chão primeiro e depois a parede por cima.
+  - Se houver um tile de chão na posição (1,2) e uma parede na mesma posição (1,2), o código vai desenhar o chão primeiro e depois a parede por cima.
   
-  Isso acontece porque no loop do código, primeiro ele desenha as camadas sem colisão e depois desenha a camada de colisão:
+  - Isso acontece porque no loop do código, primeiro ele desenha as camadas sem colisão (exemplo: chão, grama, água) e depois desenha a camada de colisão, que podem ser paredes ou objetos sólidos:
 
   ```python
   draw_layer(colliders_only=False)  # Desenha o fundo primeiro
   draw_layer(colliders_only=True)   # Depois desenha as paredes
   ```
 
-  <!-- 🔸 O que isso faz?
-1️⃣ Primeiro, ele desenha todos os tiles das camadas sem colisão (exemplo: chão, grama, água).
 
-2️⃣ Depois, ele desenha as camadas com colisão, que podem ser paredes ou objetos sólidos.
+  ## 📌 Exemplo de JSON com sobreposição de camadas
 
-📌 Exemplo de JSON com sobreposição de camadas
-json
-Copiar
-Editar
-{
-  "tileSize": 32,
-  "layers": [
-    {
-      "name": "Chão",
-      "tiles": [
-        { "x": 1, "y": 1 },
-        { "x": 1, "y": 2 }
-      ]
-    },
-    {
-      "name": "Paredes",
-      "collider": true,
-      "tiles": [
-        { "x": 1, "y": 2 }
-      ]
-    }
-  ]
-}
-🔹 O que acontece aqui?
-O tile (1,2) primeiro recebe um chão.
+  ```json
+  {
+    "tileSize": 32,
+    "layers": [
+      {
+        "name": "Chão",
+        "tiles": [
+          { "x": 1, "y": 1 },
+          { "x": 1, "y": 2 }
+        ]
+      },
+      {
+        "name": "Paredes",
+        "collider": true,
+        "tiles": [
+          { "x": 1, "y": 2 }
+        ]
+      }
+    ]
+  }
+  ```
 
-Depois, um tile de parede é desenhado por cima na mesma posição.
+  ### 🔹 O que acontece aqui?
+  
+  - O tile (1,2) primeiro recebe um chão.
 
-O jogador não pode atravessar a parede porque ela está na camada "collider": true.
+  - Depois, um tile de parede é desenhado por cima na mesma posição.
 
-🎮 Visualizando a sobreposição
-Se você imaginasse isso como um mapa 2D, ficaria algo assim:
+  - O jogador não pode atravessar a parede porque ela está na camada "collider": true.
 
-Legenda:
+  ### 🎮 Visualizando a sobreposição
+  
+  - Se você imaginasse isso como um mapa 2D, ficaria algo assim:
 
-🟩 = Chão
+  ```
+  Legenda:
+  
+  🟩 = Chão
+  
+  🟥 = Parede
+  
+  ⬛ = Vazio
+  ```
 
-🟥 = Parede
+  - Antes de desenhar colisões:
 
-⬛ = Vazio
+  ```
+  🟩⬛⬛⬛
+  🟩⬛⬛⬛
+  ```
 
-Antes de desenhar colisões:
+  - Depois de adicionar colisão:
 
-Copiar
-Editar
-🟩⬛⬛⬛
-🟩⬛⬛⬛
-Depois de adicionar colisão:
+  ```
+  🟩⬛⬛⬛
+  🟥⬛⬛⬛
+  ```
 
-Copiar
-Editar
-🟩⬛⬛⬛
-🟥⬛⬛⬛
-Ou seja, a parede apareceu por cima do chão!
+  - Ou seja, a parede apareceu por cima do chão!
 
-🛠 E se eu quiser mudar a ordem das camadas?
-Se você quiser que uma camada apareça por cima de outra, basta mudar a ordem no JSON. Por exemplo, se você colocar "Paredes" antes do "Chão", o chão vai aparecer por cima da parede.
+  ## 🛠 E se eu quiser mudar a ordem das camadas?
+  
+  - Se você quiser que uma camada apareça por cima de outra, basta mudar a ordem no JSON. Por exemplo, se você colocar "Paredes" antes do "Chão", o chão vai aparecer por cima da parede.
 
-Caso queira fazer algo mais avançado, você pode adicionar uma chave "zIndex" no JSON e ordenar as camadas antes de desenhar. -->
+  - Caso queira fazer algo mais avançado, você pode adicionar uma chave "zIndex" no JSON e ordenar as camadas antes de desenhar.
+
 </details>
 
 <details>
   <summary><h2>⚠️ Importante</h2></summary>
   
-  - O projeto foi criado com base na criação de somente duas camadas, 2 elementos. Uma forma simples, mas e se adicionarmos mais elementos?
+  - O projeto foi criado com base na criação de somente duas camadas, 2 elementos, uma forma simples. Contudo, e se adicionarmos mais elementos?
     
   - A primeiro momento pensei em usar os "ids" do json, mas o recomendado é o seguinte: Cada elemento, uma nova camada, tipo uma parede quebrada, a camada de parede quebrada, um chão com cor diferente, uma camada de chão de cor diferente!
     
